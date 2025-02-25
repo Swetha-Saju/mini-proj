@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #0A192F;
+            color: white;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 60px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+        h2 {
+            margin-bottom: 30px;
+            font-size: 36px;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+        .form-group input {
+            width: 100%;
+            height: 50px;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            font-size: 16px;
+            text-align: center;
+            box-sizing: border-box;
+        }
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+            text-align: center;
+        }
+        .form-group .password-field {
+            margin-bottom: 20px;
+        }
+        button {
+            width: 100%;
+            height: 50px;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            background: #1E90FF;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+            box-sizing: border-box;
+        }
+        button:hover {
+            background: #00BFFF;
+        }
+        .forgot-password {
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        .forgot-password a {
+            color: #1E90FF;
+            text-decoration: none;
+        }
+        .forgot-password a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Login</h2>
+        <form id="loginForm">
+            <div class="form-group">
+                <input type="text" id="username" placeholder="Username or Email" required>
+                <input type="password" id="password" class="password-field" placeholder="Password" required>
+            </div>
+            <button type="submit">Login</button>
+            <div class="forgot-password">
+                <a href="/forgot-password">Forgot Password?</a>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Store token in localStorage
+                    localStorage.setItem('token', data.token);
+                    
+                    // Store user information
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                    
+                    // Redirect to dashboard
+                    window.location.href = '/dashboard';
+                } else {
+                    alert(data.message || 'Login failed');
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                alert('An error occurred during login');
+            }
+        });
+    </script>
+</body>
+</html>

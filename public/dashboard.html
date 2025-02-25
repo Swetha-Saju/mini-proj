@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #0A192F;
+            color: white;
+            margin: 0;
+            padding: 20px;
+        }
+        .dashboard {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 30px;
+        }
+        h1 {
+            margin: 0;
+        }
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #1E90FF;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+        }
+        .welcome-message {
+            font-size: 24px;
+            margin-bottom: 30px;
+        }
+        .logout-btn {
+            background: #1E90FF;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .logout-btn:hover {
+            background: #00BFFF;
+        }
+        .content {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <header>
+            <h1>Dashboard</h1>
+            <div class="user-info">
+                <div class="avatar" id="avatar">U</div>
+                <span id="username">User</span>
+                <button class="logout-btn" id="logoutBtn">Logout</button>
+            </div>
+        </header>
+        
+        <div class="welcome-message">
+            Welcome, <span id="fullName">User</span>!
+        </div>
+        
+        <div class="content">
+            <p>You are now logged in. This is your secure dashboard area.</p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if user is logged in
+            const token = localStorage.getItem('token');
+            if (!token) {
+                // Redirect to login if no token is found
+                window.location.href = '/login';
+                return;
+            }
+            
+            // Get user information
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            
+            // Update UI with user information
+            document.getElementById('username').textContent = user.username || 'User';
+            document.getElementById('fullName').textContent = user.fullName || 'User';
+            
+            // Set avatar initials
+            if (user.fullName) {
+                const initials = user.fullName.split(' ')
+                    .map(name => name.charAt(0))
+                    .join('')
+                    .toUpperCase();
+                document.getElementById('avatar').textContent = initials;
+            }
+            
+            // Logout functionality
+            document.getElementById('logoutBtn').addEventListener('click', function() {
+                // Clear localStorage
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                
+                // Redirect to login
+                window.location.href = '/login';
+            });
+        });
+    </script>
+</body>
+</html>
